@@ -1,0 +1,1 @@
+LIBGL_ALWAYS_SOFTWARE=1 ~/.tizen-extension-platform/server/sdktools/data/platforms/tizen-10.0/tv-samsung/emulator/bin/emulator.sh --conf ~/.tizen-extension-platform/server/sdktools/sdk-data/emulator/vms/Tizen_Emulator/vm_launch.conf

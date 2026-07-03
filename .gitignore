@@ -1,0 +1,51 @@
+# Build output
+build/
+bin/
+out/
+Debug/
+Release/
+
+# Tizen package
+*.wgt
+
+# Generated certificates (if stored locally)
+*.p12
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# IDE settings
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Eclipse/Tizen Studio
+.project
+.classpath
+.settings/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Vim
+*.swp
+*.swo
+
+# Backup files
+*~
+
+# DDLC assets
+game/*
+game.zip
