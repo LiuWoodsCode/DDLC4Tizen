@@ -58,7 +58,9 @@ excludes:
   - tizen_web_project.yaml
   - webUnitTest/*
   - index.html.symbols
-  - game1/*
+  - assets/*
+  - renpy/*
+
 
 # project dependencies
 deps: []

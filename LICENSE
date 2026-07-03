@@ -1,0 +1,60 @@
+## Purpose
+
+This project exists to make it easier to study, modify, and improve this unofficial port. The goal is to encourage collaboration while making it clear that everyone is responsible for how they distribute their own builds.
+
+This license applies only to the source code written for this project. It does **not** grant any rights to third-party intellectual property, including the assets, trademarks, or copyrights of Team Salvato or any other rights holders.
+
+## Permission
+
+You are free to:
+
+* use this source code;
+* study how it works;
+* modify it;
+* share modified or unmodified copies; and
+* include portions of it in your own projects,
+
+provided that you comply with the conditions below.
+
+## Conditions
+
+When redistributing this source code or a modified version:
+
+* retain this license;
+* credit the original contributors where reasonable;
+* clearly indicate if you have modified the code;
+* do not claim that your version is official or endorsed by the original author; and
+* do not use the author's name, branding, or identity to imply sponsorship or approval.
+
+## Third-Party Content
+
+This project may interact with software or assets owned by other parties.
+
+Nothing in this license grants permission to copy, distribute, or use those assets.
+
+You are solely responsible for ensuring your distribution complies with any applicable licenses or intellectual property guidelines.
+
+## Restricted Distribution
+
+Permission to redistribute this software does **not** include publishing or submitting it to any centralized application marketplace or software store without prior written permission from the copyright holder.
+
+This restriction includes, but is not limited to:
+
+* Samsung Galaxy Store (Samsung Apps)
+* Google Play
+* Apple App Store
+* Microsoft Store
+* Amazon Appstore
+* Steam
+* itch.io (when used as a software distribution platform)
+* any successor or substantially similar marketplace.
+
+Any person who uploads this software to a commercial or centralized application marketplace automatically loses all rights granted under this license.
+
+## Warranty
+
+THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+
+## Liability
+
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT, OR OTHERWISE, ARISING FROM THE SOFTWARE OR ITS USE.

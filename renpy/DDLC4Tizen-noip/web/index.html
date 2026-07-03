@@ -1,0 +1,272 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Doki Doki Literature Club! (Tizen)</title>
+
+    <script>
+    (function () {
+        var storageKey = "ddlc4tizen.characters.v1";
+        var names = ["monika", "natsuki", "sayori", "yuri"];
+        var memoryState = null;
+
+        function normalize(name) {
+            name = String(name || "").toLowerCase();
+
+            if (names.indexOf(name) === -1) {
+                throw new Error("Unknown character: " + name);
+            }
+
+            return name;
+        }
+
+        function blankState() {
+            var state = {};
+
+            names.forEach(function (name) {
+                state[name] = "present";
+            });
+
+            return state;
+        }
+
+        function getItem() {
+            try {
+                return window.localStorage.getItem(storageKey);
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function setItem(value) {
+            try {
+                window.localStorage.setItem(storageKey, value);
+                return true;
+            } catch (error) {
+                memoryState = JSON.parse(value);
+                return false;
+            }
+        }
+
+        function load() {
+            var state = memoryState || {};
+            var raw = getItem();
+
+            if (raw) {
+                try {
+                    state = JSON.parse(raw) || {};
+                } catch (error) {
+                    state = {};
+                }
+            }
+
+            names.forEach(function (name) {
+                if (state[name] !== "deleted") {
+                    state[name] = "present";
+                }
+            });
+
+            return state;
+        }
+
+        function save(state) {
+            memoryState = state;
+            setItem(JSON.stringify(state));
+
+            if (window.CustomEvent) {
+                window.dispatchEvent(new CustomEvent("ddlc4tizen-character-state-change", {
+                    detail: state
+                }));
+            }
+        }
+
+        function setState(name, value) {
+            var state = load();
+            state[normalize(name)] = value;
+            save(state);
+            return 1;
+        }
+
+        function restoreAll() {
+            save(blankState());
+            return 1;
+        }
+
+        function deleteAll() {
+            var state = {};
+
+            names.forEach(function (name) {
+                state[name] = "deleted";
+            });
+
+            save(state);
+            return 1;
+        }
+
+        window.DDLC4TizenCharacters = {
+            state: function (name) {
+                return load()[normalize(name)];
+            },
+            exists: function (name) {
+                return load()[normalize(name)] === "present" ? 1 : 0;
+            },
+            create: function (name) {
+                return setState(name, "present");
+            },
+            "delete": function (name) {
+                return setState(name, "deleted");
+            },
+            remove: function (name) {
+                return setState(name, "deleted");
+            },
+            restoreAll: restoreAll,
+            deleteAll: deleteAll,
+            all: function () {
+                return JSON.stringify(load());
+            }
+        };
+
+        function titleCase(name) {
+            return name.charAt(0).toUpperCase() + name.slice(1);
+        }
+
+        function makeButton(text, className, callback) {
+            var button = document.createElement("button");
+            button.type = "button";
+            button.className = className;
+            button.appendChild(document.createTextNode(text));
+            button.addEventListener("click", callback);
+            return button;
+        }
+
+        function installMenu() {
+            if (document.getElementById("ddlc4tizen-character-menu")) {
+                return;
+            }
+
+            var style = document.createElement("style");
+            style.textContent = [
+                "#ddlc4tizen-character-menu{position:fixed;top:12px;right:12px;z-index:2147483647;font-family:Arial,sans-serif;color:#2f2430}",
+                "#ddlc4tizen-character-menu button{font:inherit;cursor:pointer}",
+                "#ddlc4tizen-character-toggle{width:44px;height:44px;border:0;border-radius:6px;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.22);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}",
+                "#ddlc4tizen-character-toggle span{width:22px;height:2px;background:#2f2430;display:block}",
+                "#ddlc4tizen-character-panel{position:absolute;top:52px;right:0;width:300px;max-width:calc(100vw - 24px);padding:12px;background:#fff;border:1px solid rgba(47,36,48,.2);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.26)}",
+                "#ddlc4tizen-character-panel[hidden]{display:none}",
+                "#ddlc4tizen-character-panel h2{font-size:16px;line-height:20px;margin:0 0 10px;color:#2f2430}",
+                ".ddlc4tizen-character-row{display:grid;grid-template-columns:76px 64px 1fr 1fr;gap:6px;align-items:center;margin:7px 0}",
+                ".ddlc4tizen-character-name{font-weight:700;font-size:13px}",
+                ".ddlc4tizen-character-state{font-size:12px;color:#6a556d}",
+                ".ddlc4tizen-character-action{border:1px solid rgba(47,36,48,.18);border-radius:4px;background:#f7f2f7;color:#2f2430;padding:6px 8px;font-size:12px}",
+                ".ddlc4tizen-character-action:hover{background:#f0d8e9}",
+                ".ddlc4tizen-character-footer{display:flex;gap:8px;margin-top:12px}",
+                ".ddlc4tizen-character-footer button{flex:1;border:0;border-radius:4px;background:#2f2430;color:#fff;padding:8px;font-size:12px}",
+                ".ddlc4tizen-character-footer button:hover{background:#5a3d5f}"
+            ].join("\n");
+            document.head.appendChild(style);
+
+            var root = document.createElement("div");
+            root.id = "ddlc4tizen-character-menu";
+
+            var toggle = document.createElement("button");
+            toggle.type = "button";
+            toggle.id = "ddlc4tizen-character-toggle";
+            toggle.setAttribute("aria-label", "Character files");
+            toggle.setAttribute("aria-expanded", "false");
+            toggle.appendChild(document.createElement("span"));
+            toggle.appendChild(document.createElement("span"));
+            toggle.appendChild(document.createElement("span"));
+
+            var panel = document.createElement("div");
+            panel.id = "ddlc4tizen-character-panel";
+            panel.hidden = true;
+
+            var title = document.createElement("h2");
+            title.appendChild(document.createTextNode("Character Files"));
+            panel.appendChild(title);
+
+            names.forEach(function (name) {
+                var row = document.createElement("div");
+                row.className = "ddlc4tizen-character-row";
+                row.setAttribute("data-character", name);
+
+                var label = document.createElement("span");
+                label.className = "ddlc4tizen-character-name";
+                label.appendChild(document.createTextNode(titleCase(name)));
+
+                var state = document.createElement("span");
+                state.className = "ddlc4tizen-character-state";
+
+                row.appendChild(label);
+                row.appendChild(state);
+                row.appendChild(makeButton("Delete", "ddlc4tizen-character-action", function () {
+                    window.DDLC4TizenCharacters["delete"](name);
+                    updateMenu();
+                }));
+                row.appendChild(makeButton("Restore", "ddlc4tizen-character-action", function () {
+                    window.DDLC4TizenCharacters.create(name);
+                    updateMenu();
+                }));
+                panel.appendChild(row);
+            });
+
+            var footer = document.createElement("div");
+            footer.className = "ddlc4tizen-character-footer";
+            footer.appendChild(makeButton("Delete All", "", function () {
+                window.DDLC4TizenCharacters.deleteAll();
+                updateMenu();
+            }));
+            footer.appendChild(makeButton("Restore All", "", function () {
+                window.DDLC4TizenCharacters.restoreAll();
+                updateMenu();
+            }));
+            panel.appendChild(footer);
+
+            root.appendChild(toggle);
+            root.appendChild(panel);
+            document.body.appendChild(root);
+
+            function updateMenu() {
+                var rows = panel.querySelectorAll(".ddlc4tizen-character-row");
+
+                Array.prototype.forEach.call(rows, function (row) {
+                    var name = row.getAttribute("data-character");
+                    row.querySelector(".ddlc4tizen-character-state").textContent = window.DDLC4TizenCharacters.state(name);
+                });
+            }
+
+            toggle.addEventListener("click", function () {
+                panel.hidden = !panel.hidden;
+                toggle.setAttribute("aria-expanded", panel.hidden ? "false" : "true");
+                updateMenu();
+            });
+
+            document.addEventListener("click", function (event) {
+                if (!root.contains(event.target)) {
+                    panel.hidden = true;
+                    toggle.setAttribute("aria-expanded", "false");
+                }
+            });
+
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "Escape") {
+                    panel.hidden = true;
+                    toggle.setAttribute("aria-expanded", "false");
+                }
+            });
+
+            window.addEventListener("ddlc4tizen-character-state-change", updateMenu);
+            updateMenu();
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", installMenu);
+        } else {
+            installMenu();
+        }
+    }());
+    </script>
+</head>
+<body>
+</body>
+</html>
